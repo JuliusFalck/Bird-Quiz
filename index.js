@@ -124,13 +124,18 @@ function generate(){
     sound_dict[all_sounds[c_index]][1] + "</span>";
 
     // play the song
-    audio_element = new Audio("data/" + all_sounds[c_index]);
+    audio_element = new Audio("data/audio/" + all_sounds[c_index]);
     audio_element.addEventListener("canplaythrough", event => {
         /* the audio is now playable; play it if permissions allow */
         audio_element.play();
         });
 
     document.querySelector('.play-button').innerHTML = "Pause";
+
+    // set the spectrogram
+
+    document.querySelector('.spectro-view').src = 
+    "data/spectrograms/" + all_sounds[c_index].split('.')[0] + ".webp"
 }
 
 
