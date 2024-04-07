@@ -33,7 +33,7 @@ import matplotlib.pyplot as plt
 
 # Load audio file
 
-audio_path = 'data/audio/XC153129 - Common Pheasant - Phasianus colchicus.mp3'
+audio_path = 'data/audio/XC878566 - Black Woodpecker - Dryocopus martius.wav'
 
 y, sr = librosa.load(audio_path)
 
@@ -61,9 +61,10 @@ img = librosa.display.specshow(S, sr=sr, x_axis='time',
                          y_axis='linear', cmap=newcmp, auto_aspect=True)
 
 
+print(sr)
 px = 1/plt.rcParams['figure.dpi']
 fig.set_size_inches((np.shape(S)[1]*px, np.shape(S)[0]*px))
 
 plt.subplots_adjust(0, 0, 1, 1)
-plt.savefig('filename.webp')
+plt.savefig('filename2.webp')
 plt.show()

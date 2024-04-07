@@ -22,8 +22,9 @@ let audio_element = new Audio();
 
 let runs = 0;
 
+let spectrogram = document.querySelector('.spectro-view');
 
-
+let start = 0;
 
 // buttons
 document.querySelector('.play-button').addEventListener('click', event => {
@@ -72,14 +73,16 @@ generate();
 function play_sound(){
     if (!audio_element.paused){
         audio_element.pause();
-        document.querySelector('.play-button').innerHTML = "Play";
-
+        document.querySelector('.play-icon').src = "res/play-icon.svg";
+        console.log(audio_element.currentTime);
     }
     else {
 
-        document.querySelector('.play-button').innerHTML = "Pause";
+        document.querySelector('.play-icon').src = "res/pause-icon.svg";
         /* the audio is now playable; play it if permissions allow */
         audio_element.play();
+        console.log(audio_element.currentTime);
+        spectro_slide();
 
 
     }
@@ -99,7 +102,6 @@ function generate(){
     let rest_sounds = Array.from(Array(all_english_names.length).keys());
 
     rest_sounds.splice(all_english_names.indexOf(sound_dict[all_sounds[c_index]][0]), 1);
-    console.log(rest_sounds);
 
     // set the incorecct options
     for (let i = 0; i < options.length; i++) {
@@ -112,7 +114,6 @@ function generate(){
         document.querySelector('#opt-' + String(i)).innerHTML = 
         "<span>" + all_english_names[rest_sounds[o_index]] + "</span> <span>" +
         all_species_names[rest_sounds[o_index]] + "</span>";
-        console.log(rest_sounds);
         rest_sounds.splice(rest_sounds.indexOf(o_index), 1);
     }
 
@@ -125,17 +126,24 @@ function generate(){
 
     // play the song
     audio_element = new Audio("data/audio/" + all_sounds[c_index]);
+    
     audio_element.addEventListener("canplaythrough", event => {
         /* the audio is now playable; play it if permissions allow */
         audio_element.play();
+        spectro_slide();
+        if (!audio_element.paused){
+            document.querySelector('.play-icon').src = "res/pause-icon.svg";
+        }
         });
 
-    document.querySelector('.play-button').innerHTML = "Pause";
+    
 
     // set the spectrogram
 
-    document.querySelector('.spectro-view').src = 
-    "data/spectrograms/" + all_sounds[c_index].split('.')[0] + ".webp"
+    spectrogram.src = "data/spectrograms/" + 
+    all_sounds[c_index].split('.')[0] + ".webp"
+    spectrogram.style.left = "50%";
+    start = spectrogram.offsetLeft;
 }
 
 
@@ -172,3 +180,24 @@ function read_songs(){
     all_english_names = [... new Set(all_english_names)];
     all_species_names = [... new Set(all_species_names)];
 }
+
+
+function spectro_slide(){
+    let id = null;
+    let pos = 0;
+    
+    
+    clearInterval(id);
+    id = setInterval(frame, 5);
+
+    function frame() {
+      if (audio_element.paused) {
+        clearInterval(id);
+      } else {
+        spectrogram.style.left = 
+        (start - spectrogram.width*audio_element.currentTime / 
+        audio_element.duration) + 'px';
+      }
+    }
+  }
+  

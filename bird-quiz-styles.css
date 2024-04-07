@@ -16,7 +16,8 @@
 }
 
 .main-view{
-    display: flex;
+    position: relative;
+    top: 50%;
     width: 100%;
     justify-content: center;
 
@@ -39,12 +40,22 @@
 }
 
 .play-button{
-    
+    height: 80px;
+    border-style: solid;
+    color: white;
+    background-color: black;
     margin-bottom: 1vh;
     font-size: 2vh;
     text-align: center;
     width: 20%;
     
+    
+}
+
+.play-icon{
+    color: white;
+    height: 5vh;
+    left: 50%;
 }
 
 .next-button{
@@ -53,6 +64,10 @@
     font-size: 2vh;
     text-align: center;
     width: 20%;
+    background-color: black;
+    border-style: solid;
+    color: white;
+    border-color: white;
 }
 
 .option-button{
@@ -102,5 +117,19 @@
 
 
 .spectro-view{
-    height: 50vh;
+    position: absolute;
+    left: 50%;
+    height: 45vh;
+    
+}
+
+.indicator{
+    position: relative;
+    left: 50%;
+    right: 50%;
+    background-color: white;
+    width: 2px;
+    height: 45vh;
+    z-index: 6;
+    top: 7%;
 }
