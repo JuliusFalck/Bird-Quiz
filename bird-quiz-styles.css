@@ -120,6 +120,8 @@
     position: absolute;
     left: 50%;
     height: 45vh;
+    transform: scale(2, 1);
+    transform-origin: left;
     
 }
 
@@ -132,4 +134,26 @@
     height: 45vh;
     z-index: 6;
     top: 7%;
+}
+
+.top-menu{
+    position: absolute;
+    right: 5vw;
+    z-index: 4;
+}
+
+.flag-button{
+    width: 2vw;
+    height: 1.5vw;
+    margin: 0.5vw;
+    padding: 0;
+    border-style: solid;
+    
+}
+
+.flag-img{
+    width: 2vw;
+    height: 1.5vw;
+    border-bottom : 0.4vw groove transparent;
+
 }

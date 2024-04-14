@@ -26,6 +26,8 @@ let spectrogram = document.querySelector('.spectro-view');
 
 let start = 0;
 
+let c_lang = "English";
+
 // buttons
 document.querySelector('.play-button').addEventListener('click', event => {
     play_sound();
@@ -62,11 +64,22 @@ document.querySelector('.next-button').addEventListener('click', event => {
 });
 
 
+document.querySelector('#gbr-flag-button').addEventListener('click', event => {
+    switchLanguage("English");
+});
+
+document.querySelector('#swe-flag-button').addEventListener('click', event => {
+    switchLanguage("Swedish");
+});
+
+
 // start
 
 read_songs();
 
 generate();
+
+switchLanguage("English");
 
 
 // functions
@@ -110,22 +123,25 @@ function generate(){
         document.querySelector('#opt-' + String(i)).style.backgroundColor = "black";
 
         let o_index = Math.floor(Math.random()*rest_sounds.length);
-        options[i] = o_index;
-        document.querySelector('#opt-' + String(i)).innerHTML = 
-        "<span>" + all_english_names[rest_sounds[o_index]] + "</span> <span>" +
-        all_species_names[rest_sounds[o_index]] + "</span>";
+
+        options[i] = rest_sounds[o_index];
+
         rest_sounds.splice(rest_sounds.indexOf(o_index), 1);
     }
 
     // set the correct option
     c_opt = Math.floor(Math.random()*6);
-    options[c_opt] = c_index;
-    document.querySelector('#opt-' + c_opt.toString()).innerHTML = 
-    "<span>" + sound_dict[all_sounds[c_index]][0] + "</span> <span>" +
-    sound_dict[all_sounds[c_index]][1] + "</span>";
+    options[c_opt] = all_english_names.indexOf(sound_dict[all_sounds[c_index]][0]);
+
+
+    // set language
+    switchLanguage(c_lang);
 
     // play the song
     audio_element = new Audio("data/audio/" + all_sounds[c_index]);
+    console.log(sound_dict[all_sounds[c_index]][0]);
+    console.log(c_index);
+    console.log(all_sounds[c_index]);
     
     audio_element.addEventListener("canplaythrough", event => {
         /* the audio is now playable; play it if permissions allow */
@@ -173,6 +189,7 @@ function read_songs(){
         let english_name = item.split('- ')[1];
         let species_name = item.split('- ')[2];
         species_name = species_name.split('.')[0];
+        species_name = species_name.split(' ')[0] + " " + species_name.split(' ')[1];
         all_english_names.push(english_name);
         all_species_names.push(species_name);
         sound_dict[item] = [english_name, species_name];
@@ -195,9 +212,42 @@ function spectro_slide(){
         clearInterval(id);
       } else {
         spectrogram.style.left = 
-        (start - spectrogram.width*audio_element.currentTime / 
+        (start - 2*spectrogram.width*audio_element.currentTime / 
         audio_element.duration) + 'px';
       }
     }
   }
   
+
+
+  function switchLanguage(lang){
+    c_lang = lang;
+    if (lang === "English"){
+        document.querySelector('#gbr-flag-img').style.borderBottom = '0.4vw groove green';
+        document.querySelector('#swe-flag-img').style.borderBottom = '0.4vw groove transparent';
+    
+        for (let i = 0; i < options.length; i++) {
+            
+            document.querySelector('#opt-' + String(i)).innerHTML = 
+            "<span>" + all_english_names[options[i]] + "</span> <span>" +
+            all_species_names[options[i]] + "</span>";
+            
+        }
+    
+    }
+
+    else{
+        document.querySelector('#swe-flag-img').style.borderBottom = '0.4vw groove green';
+        document.querySelector('#gbr-flag-img').style.borderBottom = '0.4vw groove transparent';
+        
+        for (let i = 0; i < options.length; i++) {
+            
+            document.querySelector('#opt-' + String(i)).innerHTML = 
+            "<span>" + sweDict[all_species_names[options[i]]] + "</span> <span>" +
+            all_species_names[options[i]] + "</span>";
+            
+        }
+    
+    
+    }
+  }
