@@ -87,14 +87,12 @@ function play_sound(){
     if (!audio_element.paused){
         audio_element.pause();
         document.querySelector('.play-icon').src = "res/play-icon.svg";
-        console.log(audio_element.currentTime);
     }
     else {
 
         document.querySelector('.play-icon').src = "res/pause-icon.svg";
         /* the audio is now playable; play it if permissions allow */
         audio_element.play();
-        console.log(audio_element.currentTime);
         spectro_slide();
 
 
@@ -139,9 +137,6 @@ function generate(){
 
     // play the song
     audio_element = new Audio("data/audio/" + all_sounds[c_index]);
-    console.log(sound_dict[all_sounds[c_index]][0]);
-    console.log(c_index);
-    console.log(all_sounds[c_index]);
     
     audio_element.addEventListener("canplaythrough", event => {
         /* the audio is now playable; play it if permissions allow */
@@ -186,10 +181,13 @@ function answer(a){
 function read_songs(){
 
     all_sounds.forEach((item, index)=>{
-        let english_name = item.split('- ')[1];
-        let species_name = item.split('- ')[2];
+        let english_name = item.split(' - ').at(-2);
+        english_name = english_name.replace(/[^a-zA-Z\s]/g,"").trim();
+       console.log(item);
+        let species_name = item.split(' - ').at(-1);
         species_name = species_name.split('.')[0];
         species_name = species_name.split(' ')[0] + " " + species_name.split(' ')[1];
+        console.log(species_name);
         all_english_names.push(english_name);
         all_species_names.push(species_name);
         sound_dict[item] = [english_name, species_name];
@@ -210,6 +208,7 @@ function spectro_slide(){
     function frame() {
       if (audio_element.paused) {
         clearInterval(id);
+        document.querySelector('.play-icon').src = "res/play-icon.svg";
       } else {
         spectrogram.style.left = 
         (start - 2*spectrogram.width*audio_element.currentTime / 
@@ -225,7 +224,7 @@ function spectro_slide(){
     if (lang === "English"){
         document.querySelector('#gbr-flag-img').style.borderBottom = '0.4vw groove green';
         document.querySelector('#swe-flag-img').style.borderBottom = '0.4vw groove transparent';
-    
+        console.log(all_english_names.length);
         for (let i = 0; i < options.length; i++) {
             
             document.querySelector('#opt-' + String(i)).innerHTML = 
@@ -243,7 +242,8 @@ function spectro_slide(){
         for (let i = 0; i < options.length; i++) {
             
             document.querySelector('#opt-' + String(i)).innerHTML = 
-            "<span>" + sweDict[all_species_names[options[i]]] + "</span> <span>" +
+            "<span>" + sweDict[all_species_names[options[i]]].charAt(0).toUpperCase() +
+             sweDict[all_species_names[options[i]]].slice(1) + "</span> <span>" +
             all_species_names[options[i]] + "</span>";
             
         }
