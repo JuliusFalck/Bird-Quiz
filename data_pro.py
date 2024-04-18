@@ -58,7 +58,7 @@ def get_sounds():
     files = os.listdir("./data/audio")
     for f in files:
         sounds += '"' + f + '",'
-        generate_spectrogram(f)
+        #generate_spectrogram(f)
         
     sounds = sounds[:-1]
     sounds += "]"
