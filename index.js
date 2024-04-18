@@ -124,7 +124,7 @@ function generate(){
 
         options[i] = rest_sounds[o_index];
 
-        rest_sounds.splice(rest_sounds.indexOf(o_index), 1);
+        rest_sounds.splice(o_index, 1);
     }
 
     // set the correct option
