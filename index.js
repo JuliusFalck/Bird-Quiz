@@ -28,6 +28,12 @@ let start = 0;
 
 let c_lang = "English";
 
+let c_category = "All";
+
+let c_sounds = [];
+
+let c_species = [];
+
 // buttons
 document.querySelector('.play-button').addEventListener('click', event => {
     play_sound();
@@ -60,9 +66,10 @@ document.querySelector('#opt-5').addEventListener('click', event => {
 });
 
 document.querySelector('.next-button').addEventListener('click', event => {
-    generate();
+    generate(true);
 });
 
+// top-right-menu
 
 document.querySelector('#gbr-flag-button').addEventListener('click', event => {
     switchLanguage("English");
@@ -73,14 +80,31 @@ document.querySelector('#swe-flag-button').addEventListener('click', event => {
 });
 
 
+// top-left-menu
+
+document.querySelector('.search-box').addEventListener('input', event => {
+    search();
+})
+
+document.querySelector('.category-button').addEventListener('click', event =>{
+    show_category();
+})
+
+document.querySelector('.x-button').addEventListener('click', event =>{
+    document.querySelector('.search-box').value = "";
+    search();
+})
+
+
 // start
 
 read_songs();
 
-generate();
+generate(false);
 
 switchLanguage("English");
 
+add_categories();
 
 // functions
 function play_sound(){
@@ -100,19 +124,43 @@ function play_sound(){
 }
 
 
-function generate(){
+function generate(play){
     
     answered = false;
 
     // stop sound
     audio_element.pause();
 
-    // pick a sound
-    c_index = Math.floor(Math.random()*all_sounds.length);
+    // set allowed songs for the category
+    if (c_category == "All"){
+        c_species = [...all_species_names];
+    }
+    else {
+        c_species = [];
+        for (let i = 0; i < all_species_names.length; i++) {
 
-    let rest_sounds = Array.from(Array(all_english_names.length).keys());
+            if (categories[c_category].includes(all_species_names[i])){
+                c_species.push(all_species_names[i]);
+            }
+            
+        }
+    }
 
-    rest_sounds.splice(all_english_names.indexOf(sound_dict[all_sounds[c_index]][0]), 1);
+    // pick a species
+    let c_spec = c_species[Math.floor(Math.random()*c_species.length)]
+
+    let species_sounds = []
+    for (let i = 0; i < Object.keys(sound_dict).length; i++) {
+        if (c_spec == (sound_dict[Object.keys(sound_dict)[i]][1])){
+            species_sounds.push(Object.keys(sound_dict)[i]);
+        }
+        
+    }
+
+    // pick sound
+    let c_sound  =  species_sounds[Math.floor(Math.random()*species_sounds.length)]
+
+    c_species.splice(c_species.indexOf(c_spec), 1);
 
     // set the incorecct options
     for (let i = 0; i < options.length; i++) {
@@ -120,30 +168,39 @@ function generate(){
         // reset color
         document.querySelector('#opt-' + String(i)).style.backgroundColor = "black";
 
-        let o_index = Math.floor(Math.random()*rest_sounds.length);
+        let o_index = Math.floor(Math.random()*c_species.length);
 
-        options[i] = rest_sounds[o_index];
+        options[i] = c_species[o_index];
 
-        rest_sounds.splice(o_index, 1);
+        c_species.splice(o_index, 1);
     }
 
     // set the correct option
     c_opt = Math.floor(Math.random()*6);
-    options[c_opt] = all_english_names.indexOf(sound_dict[all_sounds[c_index]][0]);
+    options[5] = options[c_opt];
+    options[c_opt] = c_spec;
+
 
 
     // set language
     switchLanguage(c_lang);
 
+    set_audio(c_sound, play);
+}
+
+
+function set_audio(audio, play){
+    audio_element.pause();
     // play the song
-    audio_element = new Audio("data/audio/" + all_sounds[c_index]);
+    audio_element = new Audio("data/audio/" + audio);
     
     audio_element.addEventListener("canplaythrough", event => {
         /* the audio is now playable; play it if permissions allow */
-        audio_element.play();
-        spectro_slide();
-        if (!audio_element.paused){
-            document.querySelector('.play-icon').src = "res/pause-icon.svg";
+        if (play){audio_element.play();
+            spectro_slide();
+            if (!audio_element.paused){
+                document.querySelector('.play-icon').src = "res/pause-icon.svg";}
+        
         }
         });
 
@@ -152,7 +209,7 @@ function generate(){
     // set the spectrogram
 
     spectrogram.src = "data/spectrograms/" + 
-    all_sounds[c_index].split('.')[0] + ".webp"
+    audio.split('.')[0] + ".webp"
     spectrogram.style.left = "50%";
     start = spectrogram.offsetLeft;
 }
@@ -197,6 +254,46 @@ function read_songs(){
 }
 
 
+function add_categories(){
+    let category_selector = document.querySelector('.category-selector');
+    
+    let new_category_item = document.createElement('button');
+    new_category_item.classList.add('category-item', 'underlined');
+    new_category_item.innerHTML = "All";
+    new_category_item.id = "category-All";
+    new_category_item.style.color = 'green';
+    category_selector.appendChild(new_category_item);
+    new_category_item.addEventListener('click', event => {
+        console.log("catttt");
+        set_category(new_category_item.innerHTML);
+    })
+
+    for (let i = 0; i < Object.keys(categories).length; i++) {
+        let new_category_item = document.createElement('button');
+        new_category_item.classList.add('category-item');
+        new_category_item.innerHTML = Object.keys(categories)[i];
+        category_selector.appendChild(new_category_item);
+        new_category_item.id = "category-" + Object.keys(categories)[i];
+        new_category_item.addEventListener('click', event => {
+            set_category(new_category_item.innerHTML);
+        })
+        
+    }
+
+
+}
+
+function set_category(cat){
+    c_category = cat;
+    const elements = Array.from(document.getElementsByClassName('category-item'));
+    elements.forEach(element =>{
+        element.style.color = "white";
+    })
+    document.querySelector('#category-' + cat).style.color = "green";
+
+    generate(true);
+}
+
 function spectro_slide(){
     let id = null;
     let pos = 0;
@@ -224,13 +321,19 @@ function spectro_slide(){
     if (lang === "English"){
         document.querySelector('#gbr-flag-img').style.borderBottom = '0.4vw groove green';
         document.querySelector('#swe-flag-img').style.borderBottom = '0.4vw groove transparent';
-        console.log(all_english_names.length);
         for (let i = 0; i < options.length; i++) {
-            
+            if (options[i]){
             document.querySelector('#opt-' + String(i)).innerHTML = 
-            "<span>" + all_english_names[options[i]] + "</span> <span>" +
-            all_species_names[options[i]] + "</span>";
-            
+            "<span>" + all_english_names[all_species_names.indexOf(options[i])] + "</span> <span>" +
+            options[i] + "</span>";
+            }
+            else{
+                document.querySelector('#opt-' + String(i)).innerHTML = 
+            "<span>" + "-" + "</span> <span>" +
+            "-" + "</span>";
+            }
+
+
         }
     
     }
@@ -240,14 +343,87 @@ function spectro_slide(){
         document.querySelector('#gbr-flag-img').style.borderBottom = '0.4vw groove transparent';
         
         for (let i = 0; i < options.length; i++) {
-            
+            if (options[i]){
             document.querySelector('#opt-' + String(i)).innerHTML = 
-            "<span>" + sweDict[all_species_names[options[i]]].charAt(0).toUpperCase() +
-             sweDict[all_species_names[options[i]]].slice(1) + "</span> <span>" +
-            all_species_names[options[i]] + "</span>";
-            
+            "<span>" + sweDict[options[i]].charAt(0).toUpperCase() + sweDict[options[i]].slice(1) + "</span> <span>" +
+            options[i] + "</span>";
+            }
+            else{
+                document.querySelector('#opt-' + String(i)).innerHTML = 
+            "<span>" + "-" + "</span> <span>" +
+            "-" + "</span>";
+            }
+
+
         }
     
     
     }
   }
+
+
+
+
+function search(){
+    console.log("search");
+    let search_box = document.querySelector('.search-box');
+    let search_results = document.querySelector('.search-results');
+    let x_button = document.querySelector('.x-button');
+
+    console.log(search_box.value);
+    if (search_box.value != ""){
+        search_results.style.visibility = 'visible';
+        x_button.style.visibility = 'visible';
+    }
+
+    else{
+        search_results.style.visibility = 'hidden';
+        x_button.style.visibility = 'hidden';
+    }
+
+
+    search_results.innerHTML = "";
+
+    let results = [];
+
+    for (let i = 0; i < all_sounds.length; i++) {
+        if (all_sounds[i].toUpperCase().includes(search_box.value.toUpperCase())){
+            results.push(all_sounds[i]);
+        }
+        
+    }
+
+    for (let i = 0; i < results.length; i++) {
+        let new_result_item = document.createElement('button');
+        new_result_item.classList.add('result-item');
+        new_result_item.innerHTML = results[i];
+        search_results.appendChild(new_result_item);
+        new_result_item.id = "result-" + i;
+        new_result_item.addEventListener('click', event => {
+            set_audio(results[i], true);
+            const elements = Array.from(document.getElementsByClassName('result-item'));
+            elements.forEach(element =>{
+            element.style.color = "white";
+            })
+            document.querySelector('#result-' + i).style.color = "green";
+
+        })
+        
+    }
+
+
+
+
+}
+
+
+
+function show_category(){
+    let category_selector = document.querySelector('.category-selector');
+    if (category_selector.style.visibility == 'visible'){
+        category_selector.style.visibility = 'hidden';
+    }
+    else{
+        category_selector.style.visibility = 'visible';
+    }
+}

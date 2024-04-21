@@ -136,7 +136,133 @@
     top: 7%;
 }
 
-.top-menu{
+.top-left-menu{
+    display: flex;
+    position: absolute;
+    top: 3vh;
+    left: 1vw;
+    z-index: 4;
+}
+
+.search-box{
+    width: 12vw;
+    font-size: 24px;
+    resize: none;
+    color: white;
+    background-color: black;
+    border: solid;
+    margin-right: 1vw;
+    box-sizing: border-box;
+    border: 0.1vw solid white;
+    
+}
+
+.search-results{
+    visibility: hidden;
+    width: 12vw;
+    height: 50vh;
+    position: absolute;
+    background-color: black;
+    top: 6vh;
+    left: 1vw;
+    border: 0.1vw solid white;
+    box-sizing: border-box;
+    z-index: 5;
+    justify-content: center;  
+    align-items: center;
+    overflow: scroll;
+    overflow-x: hidden;
+    
+
+
+}
+
+
+::-webkit-scrollbar {
+    width: 0.2vw;
+  }
+
+
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: black;
+  }
+  
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: white;
+  }
+  
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+
+.result-item{
+    position: relative;
+    width: 100%;
+    height: 2vw;
+    color: white;
+    background-color: black;
+    margin: 0;
+    margin-top: 0.5vh;
+    padding: 0;
+    border: 0;
+    box-sizing: border-box;
+    
+
+}
+
+.x-button{
+    visibility: hidden;
+    position: absolute;
+    left: 11.8vw;
+    top: 3.3vh;
+    width: 2vh;
+    height: 2vh;
+    z-index: 6;
+    background-color: black;
+    border: 0;
+    color: gray;
+    font-size: 24px;
+}
+
+
+.category-button{
+    color: white;
+    background-color: black;
+    border: 0.1vw solid white;
+    height: 3vh;
+}
+
+
+.category-selector{
+    display: grid;
+    grid-template-columns: repeat(3, 10vw);
+    visibility: hidden;
+    width: 30vw;
+    height: 12vh;
+    position: absolute;
+    background-color: black;
+    top: 6vh;
+    left: 14vw;
+    border: 0.1vw solid white;
+    box-sizing: border-box;
+    z-index: 5;
+    
+}
+
+.category-item{
+    color: white;
+    background-color: black;
+    border: 0.1vw solid white;
+    
+}
+
+
+.top-right-menu{
+    top: 3vh;
     position: absolute;
     right: 5vw;
     z-index: 4;
@@ -157,3 +283,4 @@
     border-bottom : 0.4vw groove transparent;
 
 }
+
